@@ -56,6 +56,7 @@ class smartKitchenPlugin(plugin.SpeechHandlerPlugin):
             # Add item * number to ingredients
             # If unsuccessful, output error. Else:
             response = random.choice([
+                self.gettext("Have you activated your wifi? Because I'm totally feeling a connection"),
                 self.gettext("{NUMBER} {Item} have been added you absolute legend"),
                 self.gettext("{Number} {Item} added. Can I help with anything else? I have no teeth!"),
                 self.gettext("I have added {Number} {Item} you sexy beast"),
