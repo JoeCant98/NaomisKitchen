@@ -1,0 +1,6 @@
+[Plugin]
+Name = smartKitchen
+Version = 1.0.0
+License = MIT
+URL = https://github.com/JoeCant98/NaomisKitchen
+Description = Smart Kitchen to take inventory of ingredients. Get recipes from web + own store.
