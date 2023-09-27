@@ -33,7 +33,12 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
             "chicken_pasta": ["pasta", "chicken", "tomato sauce"],
             "cheesy_garlic_bread": ["garlic", "bread", "cheese"]
         }
-        self.recipe_api_endpoint = "https://example.com/recipe-api"  # Replace with a real API endpoint
+        # Modify the API endpoint to point to Edamam's Recipe API
+        self.recipe_api_endpoint = "https://api.edamam.com/api/recipes/v2"  # Edamam API endpoint
+
+        # Edamam API specific parameters (you may need an API key)
+        self.api_app_id = "d1a764d0"
+        self.api_app_key = "137d78b7bf384c229a95ba117feefd55"
 
     def intents(self):
         return {
