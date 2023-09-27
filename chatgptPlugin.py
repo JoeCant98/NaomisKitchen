@@ -28,10 +28,22 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
             "oil"
         ]
         self.recipes = {
-            "tomato_onion_garlic_recipe": ["onions", "tomatoes", "garlic"],
-            "simple_pasta": ["pasta", "tomato sauce", "cheese"],
-            "chicken_pasta": ["pasta", "chicken", "tomato sauce"],
-            "cheesy_garlic_bread": ["garlic", "bread", "cheese"]
+            "tomato_onion_garlic_recipe": {
+                "ingredients": ["onions", "tomatoes", "garlic"],
+                "instructions": "Saute onions and garlic. Add tomatoes and cook until soft. Serve with pasta."
+            },
+            "simple_pasta": {
+                "ingredients": ["pasta", "tomato sauce", "cheese"],
+                "instructions": "Boil pasta. Mix with tomato sauce and top with cheese."
+            },
+            "chicken_pasta": {
+                "ingredients": ["pasta", "chicken", "tomato sauce"],
+                "instructions": "Cook chicken and pasta separately. Mix with tomato sauce."
+            },
+            "cheesy_garlic_bread": {
+                "ingredients": ["garlic", "bread", "cheese"],
+                "instructions": "Spread garlic and cheese on bread. Toast until cheese melts."
+            }
         }
         # Modify the API endpoint to point to Edamam's Recipe API
         self.recipe_api_endpoint = "https://api.edamam.com/api/recipes/v2"  # Edamam API endpoint
@@ -96,10 +108,11 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
             self.speak("An error occurred while fetching recipes from the API. Please try again later.")
 
         # Check if there are matching recipes in your own recipes
-        matching_recipes = [name for name, ingredients in self.recipes.items() if all(ingredient in self.ingredients for ingredient in ingredients)]
+        matching_recipes = [name for name, recipe_data in self.recipes.items() if all(ingredient in self.ingredients for ingredient in recipe_data["ingredients"])]
         
         if matching_recipes:
             recipe_list = ", ".join(matching_recipes)
             self.speak(f"From your own recipes, you can make: {recipe_list}")
         else:
             self.speak("Sorry, no matching recipes found in your own recipes.")
+
