@@ -49,35 +49,75 @@
 
    Naomi should now be running on your Raspberry Pi.
 
+Certainly, here's an updated guide that includes instructions on installing the Recipe Manager Plugin from a GitHub repository:
+
 ## Installing the Recipe Manager Plugin
 
-1. **Create a Plugin Directory:**
+### Method 1: Manual Installation
 
-   Inside your Naomi installation folder, create a directory for your custom plugins. You can name it `plugins`. Use the following command to create the directory:
+#### Create a Plugin Directory:
 
-   ```shell
-   mkdir /path/to/naomi/plugins
-   ```
+Inside your Naomi installation folder, create a directory for your custom plugins. You can name it `plugins`. Use the following command to create the directory:
 
-2. **Create the Plugin File:**
+```bash
+mkdir /path/to/naomi/plugins
+```
 
-   Inside the `plugins` directory, create a Python file for the Recipe Manager Plugin. You can name it, for example, `recipe_plugin.py`. You can create this file using a text editor or terminal-based editors like `nano` or `vim`.
+#### Create the Plugin File:
 
-3. **Copy and Paste the Plugin Code:**
+Inside the `plugins` directory, create a Python file for the Recipe Manager Plugin. You can name it, for example, `recipe_plugin.py`. You can create this file using a text editor or terminal-based editors like nano or vim.
 
-   Open the `recipe_plugin.py` file and copy and paste the code for the Recipe Manager Plugin into this file. Make sure to adjust the code as needed, including adding any custom ingredients and recipes.
+#### Copy and Paste the Plugin Code:
 
-4. **Save the Plugin File:**
+Open the `recipe_plugin.py` file and copy and paste the code for the Recipe Manager Plugin into this file. Make sure to adjust the code as needed, including adding any custom ingredients and recipes.
 
-   Save the `recipe_plugin.py` file in the `plugins` directory.
+#### Save the Plugin File:
 
-5. **Restart Naomi:**
+Save the `recipe_plugin.py` file in the `plugins` directory.
 
-   Restart Naomi to load the new plugin:
+#### Restart Naomi:
 
-   ```shell
-   naomi
-   ```
+Restart Naomi to load the new plugin:
+
+```bash
+naomi
+```
+
+### Method 2: Installation from GitHub Repository
+
+#### Clone the GitHub Repository:
+
+If the Recipe Manager Plugin is available on a GitHub repository, you can install it by cloning the repository. Navigate to the directory where you want to install the plugin and run:
+
+```bash
+git clone https://github.com/your_username/your_repository.git
+```
+
+Replace `https://github.com/your_username/your_repository.git` with the actual URL of the GitHub repository.
+
+#### Install the Plugin:
+
+After cloning the repository, navigate to the newly created directory containing the plugin files. You should see the `recipe_plugin.py` file inside. If not, make sure you are in the correct directory.
+
+#### Copy the Plugin File:
+
+Copy the `recipe_plugin.py` file from the cloned repository directory to your Naomi `plugins` directory. You can use the following command to do this:
+
+```bash
+cp recipe_plugin.py /path/to/naomi/plugins
+```
+
+Replace `/path/to/naomi` with the actual path to your Naomi installation.
+
+#### Restart Naomi:
+
+Restart Naomi to load the new plugin:
+
+```bash
+naomi
+```
+
+With these instructions, you can either manually create the plugin file or install it from a GitHub repository, depending on your preferred method.
 
 ## Using the Recipe Manager Plugin
 
