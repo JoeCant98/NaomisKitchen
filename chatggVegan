@@ -5,7 +5,7 @@ from naomi import plugin
 class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
     def __init__(self, *args, **kwargs):
         super(RecipeManagerPlugin, self).__init__(*args, **kwargs)
-        # Initialize ingredient list, API endpoint, and dietary preferences
+        # Initialize ingredient list, API endpoint, dietary preferences, and selected recipe
         self.ingredients = [
             "onions",
             "tomatoes",
@@ -28,10 +28,26 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
             "oil"
         ]
         self.recipes = {
-            "tomato_onion_garlic_recipe": ["onions", "tomatoes", "garlic"],
-            "simple_pasta": ["pasta", "tomato sauce", "cheese"],
-            "chicken_pasta": ["pasta", "chicken", "tomato sauce"],
-            "cheesy_garlic_bread": ["garlic", "bread", "cheese"]
+            "tomato_onion_garlic_recipe": {
+                "ingredients": ["onions", "tomatoes", "garlic"],
+                "dietary": ["vegan", "gluten-free"],
+                "instructions": "Saute onions and garlic. Add tomatoes. Simmer and serve.",
+            },
+            "simple_pasta": {
+                "ingredients": ["pasta", "tomato sauce", "cheese"],
+                "dietary": [],
+                "instructions": "Cook pasta. Mix with tomato sauce and cheese. Bake until cheese is melted.",
+            },
+            "chicken_pasta": {
+                "ingredients": ["pasta", "chicken", "tomato sauce"],
+                "dietary": [],
+                "instructions": "Cook pasta. Cook chicken and mix with tomato sauce. Serve over pasta.",
+            },
+            "cheesy_garlic_bread": {
+                "ingredients": ["garlic", "bread", "cheese"],
+                "dietary": [],
+                "instructions": "Mix garlic and cheese. Spread on bread. Bake until cheese is melted.",
+            }
         }
         # Modify the API endpoint to point to Edamam's Recipe API
         self.recipe_api_endpoint = "https://api.edamam.com/api/recipes/v2"  # Edamam API endpoint
@@ -42,6 +58,9 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
 
         # Dietary preferences
         self.dietary_preferences = ["vegan", "gluten-free"]  # Example dietary preferences
+
+        # Selected recipe
+        self.selected_recipe = None
 
     def intents(self):
         return {
@@ -74,6 +93,16 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
                     }
                 },
                 "action": self.set_dietary_preferences
+            },
+            "MakeRecipeIntent": {
+                "locale": {
+                    "en-US": {
+                        "keywords": {
+                            "Recipe": ["make", "cook"],
+                        }
+                    }
+                },
+                "action": self.make_recipe
             }
         }
 
@@ -106,35 +135,6 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
             if response.status_code == 200:
                 api_recipes = response.json().get("hits", [])
                 if api_recipes:
+                    self.selected_recipe = None  # Reset selected recipe
                     recipe_list = ", ".join([recipe["recipe"]["label"] for recipe in api_recipes])
-                    self.speak(f"You can make: {recipe_list}")
-                else:
-                    self.speak("No API recipes found with your ingredients and dietary preferences.")
-            else:
-                self.speak("Failed to retrieve recipes from the API. Please try again later.")
-        except Exception as e:
-            self.speak("An error occurred while fetching recipes from the API. Please try again later.")
-
-        # Check if there are matching recipes in your own recipes
-        matching_recipes = [name for name, ingredients in self.recipes.items() if all(ingredient in self.ingredients for ingredient in ingredients)]
-        
-        if matching_recipes:
-            recipe_list = ", ".join(matching_recipes)
-            self.speak(f"From your own recipes, you can make: {recipe_list}")
-        else:
-            self.speak("Sorry, no matching recipes found in your own recipes.")
-
-    def set_dietary_preferences(self, msg):
-        preferences = msg.data.get("DietaryPreference", [])
-        self.dietary_preferences = preferences
-        self.speak(f"Set dietary preferences to {', '.join(preferences)}.")
-
-    def suggest_substitution(self, missing_ingredient):
-        # Add logic to suggest substitutions based on dietary preferences
-        if missing_ingredient in self.substitutions:
-            return self.substitutions[missing_ingredient]
-        return None
-
-    def process_command(self, command):
-        # Process voice commands to add ingredients, find recipes, set dietary preferences, etc.
-        pass
+                    self.speak(f"You can make: {recipe_list}. To
