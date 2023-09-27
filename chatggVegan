@@ -1,0 +1,124 @@
+import inflect  # To handle plurals
+import requests  # To connect to a recipe API
+from naomi import plugin
+
+class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
+    def __init__(self, *args, **kwargs):
+        super(RecipeManagerPlugin, self).__init__(*args, **kwargs)
+        # Initialize ingredient list, API endpoint, and dietary preferences
+        self.ingredients = []  # Common ingredients
+        self.recipes = {
+            "tomato_onion_garlic_recipe": {
+                "ingredients": ["onions", "tomatoes", "garlic"],
+                "dietary": ["vegan", "gluten-free"]
+            },
+            "simple_pasta": {
+                "ingredients": ["pasta", "tomato sauce", "cheese"],
+                "dietary": []
+            },
+            "chicken_pasta": {
+                "ingredients": ["pasta", "chicken", "tomato sauce"],
+                "dietary": []
+            },
+            "cheesy_garlic_bread": {
+                "ingredients": ["garlic", "bread", "cheese"],
+                "dietary": []
+            }
+        }
+        self.recipe_api_endpoint = "https://example.com/recipe-api"  # Replace with a real API endpoint
+        self.substitutions = {
+            "milk": "almond milk",
+            "butter": "vegan butter",
+            "flour": "gluten-free flour"
+        }
+        self.dietary_preferences = []
+
+    def intents(self):
+        return {
+            "AddIngredientIntent": {
+                "locale": {
+                    "en-US": {
+                        "keywords": {
+                            "Ingredient": ["ingredient", "add", "include"],
+                        }
+                    }
+                },
+                "action": self.add_ingredient
+            },
+            "FindRecipeIntent": {
+                "locale": {
+                    "en-US": {
+                        "keywords": {
+                            "Recipe": ["recipe", "make", "cook"],
+                        }
+                    }
+                },
+                "action": self.find_recipe
+            },
+            "SetDietaryPreferencesIntent": {
+                "locale": {
+                    "en-US": {
+                        "keywords": {
+                            "DietaryPreference": ["dietary preference", "diet", "vegan", "gluten-free"],
+                        }
+                    }
+                },
+                "action": self.set_dietary_preferences
+            }
+        }
+
+    def add_ingredient(self, msg):
+        ingredient = msg.data.get("Ingredient", "").lower()
+        if ingredient:
+            # Handle plurals using inflect library
+            p = inflect.engine()
+            singular = p.singular_noun(ingredient)
+            if singular:
+                ingredient = singular  # Convert to singular if plural
+            self.ingredients.append(ingredient)
+            self.speak(f"Added {ingredient} to your ingredients list.")
+
+    def find_recipe(self, msg):
+        if not self.ingredients:
+            self.speak("Your ingredients list is empty. You can add ingredients by saying 'Add [ingredient].'")
+            return
+
+        # Filter recipes based on dietary preferences
+        filtered_recipes = [recipe_name for recipe_name, recipe_info in self.recipes.items()
+                            if all(ingredient in self.ingredients for ingredient in recipe_info["ingredients"])
+                            and all(preference in self.dietary_preferences for preference in recipe_info["dietary"])]
+
+        if not filtered_recipes:
+            self.speak("No matching recipes found based on your ingredients and dietary preferences.")
+            return
+
+        # Connect to a recipe API to fetch more recipes
+        try:
+            response = requests.get(self.recipe_api_endpoint, params={"ingredients": ",".join(self.ingredients)})
+            if response.status_code == 200:
+                api_recipes = response.json().get("recipes", [])
+                if api_recipes:
+                    recipe_list = ", ".join(api_recipes)
+                    self.speak(f"You can make: {recipe_list}")
+                else:
+                    self.speak("No API recipes found with your ingredients.")
+            else:
+                self.speak("Failed to retrieve recipes from the API. Please try again later.")
+        except Exception as e:
+            self.speak("An error occurred while fetching recipes from the API. Please try again later.")
+
+        self.speak(f"Based on your ingredients and dietary preferences, you can make: {', '.join(filtered_recipes)}")
+
+    def set_dietary_preferences(self, msg):
+        preferences = msg.data.get("DietaryPreference", [])
+        self.dietary_preferences = preferences
+        self.speak(f"Set dietary preferences to {', '.join(preferences)}.")
+
+    def suggest_substitution(self, missing_ingredient):
+        if missing_ingredient in self.substitutions:
+            return self.substitutions[missing_ingredient]
+        return None
+
+    def process_command(self, command):
+        # Process voice commands to add ingredients, find recipes, set dietary preferences, etc.
+        pass
