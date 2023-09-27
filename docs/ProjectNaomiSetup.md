@@ -1,4 +1,4 @@
-```markdown
+```
 # Installation and Setup Guide for Project Naomi on Raspberry Pi
 
 **Note:** Before you begin, make sure you have a Raspberry Pi set up with Raspbian or Raspberry Pi OS installed.
