@@ -6,7 +6,27 @@ class RecipeManagerPlugin(plugin.SpeechHandlerPlugin):
     def __init__(self, *args, **kwargs):
         super(RecipeManagerPlugin, self).__init__(*args, **kwargs)
         # Initialize ingredient list, API endpoint, and dietary preferences
-        self.ingredients = []  # Common ingredients
+        self.ingredients = [
+            "onions",
+            "tomatoes",
+            "garlic",
+            "pasta",
+            "cheese",
+            "chicken",
+            "rice",
+            "beans",
+            "lettuce",
+            "carrots",
+            "potatoes",
+            "broccoli",
+            "spinach",
+            "milk",
+            "eggs",
+            "flour",
+            "sugar",
+            "butter",
+            "oil"
+        ]
         self.recipes = {
             "tomato_onion_garlic_recipe": {
                 "ingredients": ["onions", "tomatoes", "garlic"],
